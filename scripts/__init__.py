@@ -19,16 +19,12 @@ def draw_text(surface,position=(0,0),font=None,font_size=15,font_color=(255,255,
     message = font.render(text,False,font_color)
     return surface.blit(message,position)
 
-
-from scripts.canvas.canvas_manager import canvas
-init_canvas = canvas(CANVAS_DIMENSIONS)
-
-from scripts.canvas.canvas_features import features
-ctx_features = features()
-
 from scripts.canvas.image_manager import image_loader
 loaded_images = image_loader('./images')
 loaded_images.load()
+
+from scripts.canvas.canvas_manager import init_canvas
+canvas = init_canvas(CANVAS_DIMENSIONS)
 
 from scripts.utilities.utility_manager import utility
 utils = utility()

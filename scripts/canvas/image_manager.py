@@ -11,5 +11,6 @@ class image_loader:
 			for file in os.listdir(f'{self.root_folder}/{folder}'):
 				image = pygame.image.load(f'{self.root_folder}/{folder}/{file}').convert()
 				image.set_colorkey((0,0,0))
-				image_con.append(image)
+				image_scaled = pygame.transform.scale(image, (32,32))
+				image_con.append(image_scaled)
 			self.image_database[f'{folder}'] = image_con

@@ -2,35 +2,45 @@ from scripts import*
 
 def main():
 	last_time = time.time()
-	init_canvas.create_grid(CANVAS)
+	click_once = False
+	canvas.create_layers()
 
 	while 1:
 		SCREEN.fill((25,25,25))
 		UTILITIES.fill((45,45,45))
+		if click_once:
+			canvas.canvas_layering()
 
 		keys = pygame.key.get_pressed()
-		ctx_features.canvas_displacement({"UP":keys[K_w], "DOWN":keys[K_s], "LEFT":keys[K_a], "RIGHT":keys[K_d]})
+		canvas.canvas_displacement({"UP":keys[K_w], "DOWN":keys[K_s], "LEFT":keys[K_a], "RIGHT":keys[K_d]})
 		
 		mouse = pygame.mouse.get_pos()
-		tile_row = int(mouse[0] - ctx_features.displacement[0]) // init_canvas.pixel_size
-		tile_column = int(mouse[1] - ctx_features.displacement[1]) // init_canvas.pixel_size
+		tile_row = int(mouse[0] - canvas.displacement[0]) // canvas.pixel_size
+		tile_column = int(mouse[1] - canvas.displacement[1]) // canvas.pixel_size
 		
 		utils.render_folders(UTILITIES)
 		utils.render_tileset(UTILITIES)
 
 		pygame.draw.line(UTILITIES, (255,255,255), (0,150), (200,150), 3)
-		SCREEN.blit(CANVAS,(int(ctx_features.displacement[0]),int(ctx_features.displacement[1])))
+		for i in reversed(range(canvas.layers)):
+			SCREEN.blit(canvas.surface_layers[i],(int(canvas.displacement[0]),int(canvas.displacement[1])))
 		SCREEN.blit(UTILITIES,(0,0))
 
 		draw_text(SCREEN,(210,10),"Minecraft.ttf",20,text=utils.current_folder)
-		draw_text(SCREEN,(210,460),"Minecraft.ttf",15,text=f"TILE: {tile_column},{tile_row}")
+		draw_text(SCREEN,(210,35),"Minecraft.ttf",15,text=f"Layer: {canvas.current_layer}")
+		draw_text(SCREEN,(210,455),"Minecraft.ttf",15,text=f"TILE: {tile_column},{tile_row}")
+		draw_text(SCREEN,(210,480),"Minecraft.ttf",10,(0,255,0),text=f"FPS: {'{:.2f}'.format(FPS.get_fps())}")
 		
-		init_canvas.render_tiles(CANVAS)
+		canvas.render_tiles()
 
 		#events
 		if mouse[0] > UTILITIES.get_width() and pygame.MOUSEMOTION:
-			if pygame.mouse.get_pressed()[0]:
-				ctx_features.place_tile([tile_row,tile_column])
+			pygame.mouse.set_visible(False)
+			pygame.draw.rect(SCREEN, (255,255,255), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
+			if pygame.mouse.get_pressed()[0] and utils.current_folder != "None Selected":
+				canvas.place_tile([tile_row,tile_column,utils.current_folder,utils.current_index,canvas.current_layer])
+		else:
+			pygame.mouse.set_visible(True)
 
 		for btn in utils.folders_button:
 			if pygame.mouse.get_pressed()[0] and btn[0].collidepoint(pygame.mouse.get_pos()):
@@ -39,11 +49,33 @@ def main():
 		for btn in utils.tiles_button:
 			if  pygame.mouse.get_pressed()[0] and btn[0].collidepoint(pygame.mouse.get_pos()):
 				utils.current_index = btn[1]
+
+		if keys[K_q] and click_once == False:
+			click_once = True
+			canvas.current_layer += 1
+
+			if canvas.current_layer > canvas.layers-1:
+				canvas.current_layer = 0
+
+		if keys[K_e] and click_once == False:
+			click_once = True
+			canvas.current_layer -= 1
 				
+			if canvas.current_layer < 0:
+				canvas.current_layer = canvas.layers-1
+
+		if keys[K_LSHIFT] and click_once == False:
+			click_once = True
+			canvas.current_layer = 0
+
+
 		for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()
 					sys.exit()
+
+				if event.type == pygame.KEYUP:
+					click_once = False
 
 		FPS.tick(60)
 		pygame.display.update()
