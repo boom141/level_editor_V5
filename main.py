@@ -6,13 +6,18 @@ def main():
 	canvas.create_layers()
 
 	while 1:
-		SCREEN.fill((25,25,25))
+		delta_time = time.time() - last_time
+		delta_time *= 60
+		last_time = time.time()
+
+
+		SCREEN.fill((0,0,0))
 		UTILITIES.fill((45,45,45))
 		if click_once:
 			canvas.canvas_layering()
 
 		keys = pygame.key.get_pressed()
-		canvas.canvas_displacement({"UP":keys[K_w], "DOWN":keys[K_s], "LEFT":keys[K_a], "RIGHT":keys[K_d]})
+		canvas.canvas_displacement({"UP":keys[K_w], "DOWN":keys[K_s], "LEFT":keys[K_a], "RIGHT":keys[K_d]},delta_time)
 		
 		mouse = pygame.mouse.get_pos()
 		tile_row = int(mouse[0] - canvas.displacement[0]) // canvas.pixel_size
@@ -20,9 +25,10 @@ def main():
 		
 		utils.render_folders(UTILITIES)
 		utils.render_tileset(UTILITIES)
-
+			
 		pygame.draw.line(UTILITIES, (255,255,255), (0,150), (200,150), 3)
 		for i in reversed(range(canvas.layers)):
+			canvas.surface_layers[i].set_colorkey((25,25,25))
 			SCREEN.blit(canvas.surface_layers[i],(int(canvas.displacement[0]),int(canvas.displacement[1])))
 		SCREEN.blit(UTILITIES,(0,0))
 
@@ -38,10 +44,16 @@ def main():
 			pygame.mouse.set_visible(False)
 			pygame.draw.rect(SCREEN, (255,255,255), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
 			if pygame.mouse.get_pressed()[0] and utils.current_folder != "None Selected":
+				pygame.draw.rect(SCREEN, (0,255,0), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
 				canvas.place_tile([tile_row,tile_column,utils.current_folder,utils.current_index,canvas.current_layer])
+				
+			elif pygame.mouse.get_pressed()[2] and utils.current_folder != "None Selected":
+				pygame.draw.rect(SCREEN, (255,0,0), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
+				canvas.remove_tile([tile_row,tile_column,canvas.current_layer])
 		else:
 			pygame.mouse.set_visible(True)
-
+		
+		
 		for btn in utils.folders_button:
 			if pygame.mouse.get_pressed()[0] and btn[0].collidepoint(pygame.mouse.get_pos()):
 				utils.current_folder = btn[1]
