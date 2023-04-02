@@ -1,4 +1,4 @@
-import pygame
+import pygame, json
 from scripts import loaded_images
 
 
@@ -12,14 +12,29 @@ class init_canvas:
         self.displacement = [0,0]
         self.pixel_displacement_value = 5
         self.surface_layers = []
-        self.erased_tiles = []
+        self.tile_logs = []
         self.current_layer = 1
+        self.exceptions = ["foliage","decoration"]
 
     def save_level(self):
-        pass
+        filename = input("FILENAME TO BE SAVE: ") or None
+        if filename != None:
+            with open(f"./savemap/{filename}.json", "w") as output_file:
+                json.dump(self.tiles, output_file)
+
+            print("[SAVED]:MAP DATA IS SAVED!")
 
     def load_level(self):
-        pass
+        filename = input("FILENAME TO BE LOAD: ") or None
+        if filename != None:
+            try:
+                with open(f"./savemap/{filename}", "r") as new_file:
+                    self.tiles = json.load(new_file)
+                    
+                print("[LOADED]MAP DATA LOADED!")
+            except:
+                print("[ERROR] FILENAME NOT EXISTING!")
+
 
     def create_grid(self,surface):
         for y in range(0,self.canvas_dimension[1],self.pixel_size):
@@ -52,14 +67,15 @@ class init_canvas:
 
 
     def place_tile(self,tile_attributes):
-        for layer in self.tiles:
-            if tile_attributes not in self.tiles[layer]:
-                self.tiles[layer].append(tile_attributes)
+        for i, layer in enumerate(self.tiles):
+            if tile_attributes[4] == i:
+                if tile_attributes not in self.tiles[layer]:
+                    self.tiles[layer].append(tile_attributes)
 
 
     def remove_tile(self,tile_attributes):
-        if tile_attributes not in self.erased_tiles:
-            self.erased_tiles.append(tile_attributes)
+        if tile_attributes not in self.tile_logs:
+            self.tile_logs.append(tile_attributes)
 
         for i, layer in enumerate(self.tiles):
             if tile_attributes[2] == i:
@@ -68,7 +84,7 @@ class init_canvas:
                         self.tiles[layer].remove(tile)
 
 
-    def canvas_layering(self):
+    def canvas_layering(self):  
         if self.current_layer != 0:
             for i, layer in enumerate(self.surface_layers):
                 if self.current_layer == i:
@@ -83,9 +99,12 @@ class init_canvas:
     def render_tiles(self):
         for layer in self.tiles:
             for tile in self.tiles[layer]:
-                self.surface_layers[tile[4]].blit(loaded_images.image_database[tile[2]][tile[3]],
-                                                    (tile[0]*self.pixel_size,tile[1]*self.pixel_size))
-                
-        for tile in self.erased_tiles:
+                tile_log = self.surface_layers[tile[4]].blit(loaded_images.image_database[tile[2]][tile[3]],
+                (tile[0]*self.pixel_size,tile[1]*self.pixel_size))
+
+                # self.tile_logs.append(tile_log)
+
+        for tile in self.tile_logs:
             pygame.draw.rect(self.surface_layers[tile[2]], (0,0,0),
             (tile[0]*self.pixel_size,tile[1]*self.pixel_size,self.pixel_size,self.pixel_size))
+            self.tile_logs.remove(tile)

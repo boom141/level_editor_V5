@@ -19,8 +19,8 @@ def draw_text(surface,position=(0,0),font=None,font_size=15,font_color=(255,255,
     message = font.render(text,False,font_color)
     return surface.blit(message,position)
 
-from scripts.canvas.image_manager import image_loader
-loaded_images = image_loader('./images')
+from scripts.utilities.image_manager import image_loader
+loaded_images = image_loader('./images/environment')
 loaded_images.load()
 
 from scripts.canvas.canvas_manager import init_canvas

@@ -42,12 +42,18 @@ def main():
 		#events
 		if mouse[0] > UTILITIES.get_width() and pygame.MOUSEMOTION:
 			pygame.mouse.set_visible(False)
-			pygame.draw.rect(SCREEN, (255,255,255), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
-			if pygame.mouse.get_pressed()[0] and utils.current_folder != "None Selected":
+			if utils.current_folder not in canvas.exceptions:
+				canvas.pixel_size = 32
+				pygame.draw.rect(SCREEN, (255,255,255), (mouse[0] - 16,mouse[1] - 16,canvas.pixel_size,canvas.pixel_size), 1)
+			else:
+				img = loaded_images.image_database[utils.current_folder][utils.current_index]
+				SCREEN.blit(img,(mouse[0],mouse[1]))
+			
+			if pygame.mouse.get_pressed()[0] and utils.current_folder != "None Selected" and canvas.current_layer != 0:
 				pygame.draw.rect(SCREEN, (0,255,0), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
 				canvas.place_tile([tile_row,tile_column,utils.current_folder,utils.current_index,canvas.current_layer])
-				
-			elif pygame.mouse.get_pressed()[2] and utils.current_folder != "None Selected":
+					
+			elif pygame.mouse.get_pressed()[2] and utils.current_folder != "None Selected" and canvas.current_layer != 0:
 				pygame.draw.rect(SCREEN, (255,0,0), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
 				canvas.remove_tile([tile_row,tile_column,canvas.current_layer])
 		else:
@@ -80,6 +86,13 @@ def main():
 			click_once = True
 			canvas.current_layer = 0
 
+		if keys[K_RETURN]:
+			click_once = True
+			canvas.save_level()
+
+		if keys[K_l]:
+			click_once = True
+			canvas.load_level()
 
 		for event in pygame.event.get():
 				if event.type == pygame.QUIT:

@@ -7,6 +7,7 @@ class utility:
         self.current_index = -1
         self.folders_button = []
         self.tiles_button = []
+        self.utilities_button = []
 
     def render_folders(self,surface):
         self.folders_button = []
