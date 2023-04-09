@@ -14,7 +14,7 @@ class init_canvas:
         self.surface_layers = []
         self.tile_logs = []
         self.current_layer = 1
-        self.exceptions = ["foliage","decoration"]
+        self.exceptions = ["foliage","decoration","entities"]
 
     def save_level(self):
         filename = input("FILENAME TO BE SAVE: ") or None
@@ -28,7 +28,7 @@ class init_canvas:
         filename = input("FILENAME TO BE LOAD: ") or None
         if filename != None:
             try:
-                with open(f"./savemap/{filename}", "r") as new_file:
+                with open(f"./savemap/{filename}.json", "r") as new_file:
                     self.tiles = json.load(new_file)
                     
                 print("[LOADED]MAP DATA LOADED!")

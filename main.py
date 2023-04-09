@@ -13,6 +13,7 @@ def main():
 
 		SCREEN.fill((0,0,0))
 		UTILITIES.fill((45,45,45))
+
 		if click_once:
 			canvas.canvas_layering()
 

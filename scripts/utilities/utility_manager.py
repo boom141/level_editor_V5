@@ -8,6 +8,7 @@ class utility:
         self.folders_button = []
         self.tiles_button = []
         self.utilities_button = []
+        self.max_row = 8
 
     def render_folders(self,surface):
         self.folders_button = []
@@ -22,6 +23,8 @@ class utility:
 
     def render_tileset(self,surface):
         self.tiles_button = []
+        cursor_column = 5
+        cursor_row = 0
         if self.current_folder != "None Selected":
             for i, tile in enumerate(loaded_images.image_database[self.current_folder]):
                 if i != self.current_index:
@@ -29,6 +32,13 @@ class utility:
                 else: 
                     color = (0,255,0)
 
-                button = surface.blit(pygame.transform.scale(tile,(30,30)),(5, 170 + int(i*35)))
+                button = surface.blit(pygame.transform.scale(tile,(30,30)),(cursor_column, 170 + int(cursor_row*35)))
                 pygame.draw.rect(surface, color, button, 1)
                 self.tiles_button.append([button,i])
+                
+                if cursor_row == self.max_row:
+                    cursor_row = 0
+                    cursor_column += 40
+                else:
+                    cursor_row += 1
+                
