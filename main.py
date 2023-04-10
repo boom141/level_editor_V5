@@ -2,9 +2,10 @@ from scripts import*
 
 def main():
 	last_time = time.time()
-	click_once = False
 	canvas.create_layers()
 
+	click_once = False
+	mouse_offset = canvas.pixel_size // 2
 	while 1:
 		delta_time = time.time() - last_time
 		delta_time *= 60
@@ -44,19 +45,20 @@ def main():
 		if mouse[0] > UTILITIES.get_width() and pygame.MOUSEMOTION:
 			pygame.mouse.set_visible(False)
 			if utils.current_folder not in canvas.exceptions:
-				canvas.pixel_size = 32
-				pygame.draw.rect(SCREEN, (255,255,255), (mouse[0] - 16,mouse[1] - 16,canvas.pixel_size,canvas.pixel_size), 1)
+				pygame.draw.rect(SCREEN, (255,255,255), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
 			else:
 				img = loaded_images.image_database[utils.current_folder][utils.current_index]
 				SCREEN.blit(img,(mouse[0],mouse[1]))
 			
 			if pygame.mouse.get_pressed()[0] and utils.current_folder != "None Selected" and canvas.current_layer != 0:
-				pygame.draw.rect(SCREEN, (0,255,0), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
+				pygame.draw.rect(SCREEN, (0,255,0), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
 				canvas.place_tile([tile_row,tile_column,utils.current_folder,utils.current_index,canvas.current_layer])
-					
+				print(canvas.tiles)
+
 			elif pygame.mouse.get_pressed()[2] and utils.current_folder != "None Selected" and canvas.current_layer != 0:
-				pygame.draw.rect(SCREEN, (255,0,0), (mouse[0] - 16,mouse[1] - 16,32,32), 1)
+				pygame.draw.rect(SCREEN, (255,0,0), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
 				canvas.remove_tile([tile_row,tile_column,canvas.current_layer])
+				print(canvas.tiles)
 		else:
 			pygame.mouse.set_visible(True)
 		

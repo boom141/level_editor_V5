@@ -3,7 +3,7 @@ from scripts import loaded_images
 
 
 class init_canvas:
-    def __init__(self,canvas_dimension=(0,0),pixel_size=32,layers=10):
+    def __init__(self,pixel_size=16,canvas_dimension=(0,0),layers=10):
         self.tiles = {}
         self.canvas_dimension = canvas_dimension
         self.pixel_size = pixel_size
@@ -23,6 +23,7 @@ class init_canvas:
                 json.dump(self.tiles, output_file)
 
             print("[SAVED]:MAP DATA IS SAVED!")
+
 
     def load_level(self):
         filename = input("FILENAME TO BE LOAD: ") or None
@@ -72,15 +73,15 @@ class init_canvas:
                 if tile_attributes not in self.tiles[layer]:
                     self.tiles[layer].append(tile_attributes)
 
-
+        
     def remove_tile(self,tile_attributes):
-        if tile_attributes not in self.tile_logs:
-            self.tile_logs.append(tile_attributes)
-
         for i, layer in enumerate(self.tiles):
             if tile_attributes[2] == i:
                 for tile in self.tiles[layer]:
                     if tile[0] == tile_attributes[0] and tile[1] == tile_attributes[1]:
+                        pygame.draw.rect(self.surface_layers[tile_attributes[2]], (0,0,0), 
+                        (tile_attributes[0]*self.pixel_size,tile_attributes[1]*self.pixel_size,self.pixel_size,self.pixel_size))
+                        
                         self.tiles[layer].remove(tile)
 
 
@@ -99,12 +100,5 @@ class init_canvas:
     def render_tiles(self):
         for layer in self.tiles:
             for tile in self.tiles[layer]:
-                tile_log = self.surface_layers[tile[4]].blit(loaded_images.image_database[tile[2]][tile[3]],
+                self.surface_layers[tile[4]].blit(loaded_images.image_database[tile[2]][tile[3]],
                 (tile[0]*self.pixel_size,tile[1]*self.pixel_size))
-
-                # self.tile_logs.append(tile_log)
-
-        for tile in self.tile_logs:
-            pygame.draw.rect(self.surface_layers[tile[2]], (0,0,0),
-            (tile[0]*self.pixel_size,tile[1]*self.pixel_size,self.pixel_size,self.pixel_size))
-            self.tile_logs.remove(tile)

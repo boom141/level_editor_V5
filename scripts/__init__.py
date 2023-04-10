@@ -1,4 +1,4 @@
-import pygame, sys, os, random, time
+import pygame, sys, os, random, time, json
 from pygame.locals import*
 pygame.init()
 
@@ -20,12 +20,13 @@ def draw_text(surface,position=(0,0),font=None,font_size=15,font_color=(255,255,
     return surface.blit(message,position)
 
 from scripts.utilities.tileset_loader import tileset_init
-loaded_images = tileset_init('./images/tileset')
+loaded_images = tileset_init('./images/tileset',scale=26)
 loaded_images.load()
 
 
 from scripts.canvas.canvas_manager import init_canvas
-canvas = init_canvas(CANVAS_DIMENSIONS)
+canvas = init_canvas(canvas_dimension=CANVAS_DIMENSIONS,pixel_size=26)
 
 from scripts.utilities.utility_manager import utility
 utils = utility()
+
