@@ -44,7 +44,7 @@ def main():
 
 		#events
 		if mouse[0] > UTILITIES.get_width() and pygame.MOUSEMOTION:
-			pygame.mouse.set_visible(False)
+			# pygame.mouse.set_visible(False)
 			if utils.current_folder not in canvas.exceptions:
 				pygame.draw.rect(SCREEN, (255,255,255), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
 			else:
@@ -55,10 +55,14 @@ def main():
 				pygame.draw.rect(SCREEN, (0,255,0), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
 				canvas.place_tile([tile_row,tile_column,utils.current_folder,utils.current_index,canvas.current_layer])
 
-
-			elif mouse_click[2] and utils.current_folder != "None Selected" and canvas.current_layer != 0:
-				pygame.draw.rect(SCREEN, (255,0,0), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
-				canvas.remove_tile([tile_row,tile_column,canvas.current_layer])
+			for rects in canvas.tile_logs:
+				if mouse_click[2] and rects.collidepoint(mouse) and utils.current_folder != "None Selected" and canvas.current_layer != 0:
+					print(rects.x,rects.y)
+					canvas.remove_tile([rects.x,rects.y,utils.current_folder,utils.current_index,canvas.current_layer],rects)
+		
+			# elif mouse_click[2] and utils.current_folder != "None Selected" and canvas.current_layer != 0:
+			# 	pygame.draw.rect(SCREEN, (255,0,0), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
+			# 	canvas.remove_tile([tile_row,tile_column,canvas.current_layer])
 				
 		else:
 			pygame.mouse.set_visible(True)
