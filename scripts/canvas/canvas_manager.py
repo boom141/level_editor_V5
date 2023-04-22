@@ -73,6 +73,7 @@ class init_canvas:
                 if tile_attributes not in self.tiles[layer]:
                     self.tiles[layer].append(tile_attributes)
 
+
     def remove_tile(self,tile_attributes,rects):
         for i, layer in enumerate(self.tiles):
             if tile_attributes[2] == i:
@@ -81,16 +82,17 @@ class init_canvas:
                         pygame.draw.rect(self.surface_layers[self.current_layer], (0,0,0), rects)
                         self.tiles[layer].remove(tile_data)
 
-    def canvas_layering(self):  
-        if self.current_layer != 0:
-            for i, layer in enumerate(self.surface_layers):
-                if self.current_layer == i:
-                    layer.set_alpha(225)
-                else:
-                    layer.set_alpha(120)
-        else:
-            for layer in self.surface_layers:
-                layer.set_alpha(255)
+
+    # def canvas_layering(self):  
+    #     if self.current_layer != 0:
+    #         for i, layer in enumerate(self.surface_layers):
+    #             if self.current_layer == i:
+    #                 layer.set_alpha(225)
+    #             else:
+    #                 layer.set_alpha(120)
+    #     else:
+    #         for layer in self.surface_layers:
+    #             layer.set_alpha(255)
 
 
     def render_tiles(self):

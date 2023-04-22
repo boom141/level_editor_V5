@@ -40,7 +40,7 @@ def main():
 		draw_text(SCREEN,(210,455),"Minecraft.ttf",15,text=f"TILE: {tile_column},{tile_row}")
 		draw_text(SCREEN,(210,480),"Minecraft.ttf",10,(0,255,0),text=f"FPS: {'{:.2f}'.format(FPS.get_fps())}")
 		
-		tile_logs = canvas.render_tiles()
+		canvas.render_tiles()
 
 		#events
 		if mouse[0] > UTILITIES.get_width() and pygame.MOUSEMOTION:
@@ -55,7 +55,7 @@ def main():
 				pygame.draw.rect(SCREEN, (0,255,0), (mouse[0] - mouse_offset,mouse[1] - mouse_offset,canvas.pixel_size,canvas.pixel_size), 1)
 				canvas.place_tile([tile_row,tile_column,utils.current_folder,utils.current_index,canvas.current_layer])
 
-			for rects in tile_logs:
+			for rects in canvas.tile_logs:
 				if mouse_click[2] and rects.collidepoint(mouse) and utils.current_folder != "None Selected" and canvas.current_layer != 0:
 					canvas.remove_tile([int(rects.x - canvas.displacement[0]) // canvas.pixel_size,int(rects.y - canvas.displacement[1]) // canvas.pixel_size,canvas.current_layer]
 					,rects)
@@ -79,7 +79,6 @@ def main():
 				canvas.current_layer = 0
 
 		if keys[K_e] and click_once == False:
-			print(canvas.tile_logs)
 			click_once = True
 			canvas.current_layer -= 1
 				

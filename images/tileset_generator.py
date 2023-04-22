@@ -7,29 +7,51 @@ pygame.display.set_caption("SPRITESHEET GENERATOR")
 FPS = pygame.time.Clock()
 
 SCALE = 2
+BLACK = (0,0,0,255)
 
-image_path = "tileset/grass-tileset/0.png"
+image_path = "d2.png"
 SCREEN = pygame.display.set_mode((200,200), 0, 32)
 
-sample_image = pygame.image.load(image_path).convert()
-sample_image.set_colorkey((0,0,0))
+session_image = pygame.image.load(image_path).convert()
+SCREEN_DIMENSION = [session_image.get_width()*SCALE,session_image.get_height()*SCALE]
+SCREEN = SCREEN = pygame.display.set_mode(SCREEN_DIMENSION, 0, 32)
+
+image = session_image.copy()
 
 click_once = True
-image_rects = [pygame.Rect(80,30,sample_image.get_width(),sample_image.get_height()),pygame.Rect(80,60,sample_image.get_width(),sample_image.get_height())]
-while 1:    
+
+initial_point = None
+current_selection = None
+
+selection_list = []
+while 1:
     # mouse fucntions
-    mouse = pygame.mouse.get_pos()
+    image.fill((0,0,0))
+    image.blit(session_image,(0,0))
+    mx, my = pygame.mouse.get_pos()
+    mx = mx//SCALE
+    my = my//SCALE
+
     mouse_clicked = pygame.mouse.get_pressed()
-  
-    for rect in image_rects:
-         if mouse_clicked[0] and rect.collidepoint(mouse) and click_once:
-              click_once = False
-              SCREEN.fill((0,0,0))
-              image_rects.remove(rects)
-    
-    for rects in image_rects:
-        SCREEN.blit(sample_image, rects)
-    
+    keys = pygame.key.get_pressed()
+
+    #rectangular selector
+    if mouse_clicked[2]:
+         if click_once:
+            click_once = False
+            initial_point = [mx,my]
+         if pygame.MOUSEMOTION:
+            rect_scale = math.hypot(mx-initial_point[0], my-initial_point[1])
+            current_selection = pygame.Rect(initial_point[0],initial_point[1],rect_scale,rect_scale)
+            pygame.draw.rect(image, (255,0,0), current_selection, 1)
+
+    if selection_list:
+        for selection in selection_list:
+            pygame.draw.rect(image, (255,0,0), selection, 1)
+
+    if keys[K_z] and click_once:
+        click_once = False
+        selection_list = selection_list[:-1]
 
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -38,8 +60,13 @@ while 1:
 
             if event.type == pygame.MOUSEBUTTONUP:
                 click_once = True
+                selection_list.append(current_selection)
 
-    FPS.tick(60)
+            if event.type == pygame.KEYUP:
+                 click_once = True
+
+    SCREEN.blit(pygame.transform.scale(image,SCREEN_DIMENSION),(0,0))
+    FPS.tick(100)
     pygame.display.update()
 
 
